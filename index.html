@@ -1571,17 +1571,53 @@ document.getElementById('btnSaveManual').onclick = async () => {
       document.getElementById('btnBackEditPreview').style.display = 'inline-flex';
     };
 
-    function setupMic(bI, iI) {
-      document.getElementById(bI).onclick = () => {
-        const S = window.webkitSpeechRecognition || window.SpeechRecognition;
-        if(!S) return;
-        const r = new S(); r.lang = 'zh-TW';
-        r.onstart = () => document.getElementById(bI).classList.add('recording');
-        r.onend = () => document.getElementById(bI).classList.remove('recording');
-        r.onresult = (e) => document.getElementById(iI).value = e.results[0][0].transcript;
-        r.start();
-      };
+    function setupMic(btnId, inputId) {
+  const btn = document.getElementById(btnId);
+  const input = document.getElementById(inputId);
+  
+  btn.onclick = () => {
+    const Speech = window.webkitSpeechRecognition || window.SpeechRecognition;
+    if (!Speech) {
+      alert("您的瀏覽器不支援語音辨識，請使用 Chrome 瀏覽器。");
+      return;
     }
+
+    const r = new Speech();
+    r.lang = 'zh-TW';
+    r.continuous = false; // 關鍵：辨識到一段落就自動結束，不持續監聽
+    r.interimResults = false;
+
+    r.onstart = () => {
+      btn.classList.add('recording');
+    };
+
+    r.onend = () => {
+      btn.classList.remove('recording');
+    };
+
+    r.onresult = (e) => {
+      const result = e.results[0][0].transcript;
+      input.value = result;
+      // 關鍵：填入文字後明確停止麥克風，釋放硬體資源
+      r.stop(); 
+      btn.classList.remove('recording');
+    };
+
+    r.onerror = (e) => {
+      console.error("語音辨識錯誤:", e.error);
+      btn.classList.remove('recording');
+      r.stop();
+    };
+
+    r.start();
+  };
+}
+
+// 重新綁定四個按鈕
+setupMic("btnMicLocation", "locationInput");
+setupMic("btnMicProblem", "problemInput");
+setupMic("btnMicImpact", "impactInput");
+setupMic("btnMicSuggestion", "suggestionInput");
     setupMic("btnMicLocation", "locationInput"); setupMic("btnMicProblem", "problemInput"); setupMic("btnMicImpact", "impactInput"); setupMic("btnMicSuggestion", "suggestionInput");
   </script>
 
