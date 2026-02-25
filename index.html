@@ -1,0 +1,1591 @@
+<!doctype html>
+
+<html lang="zh-Hant">
+
+<head>
+<script>
+      var password = prompt("🕵️ 小記者請輸入訪問密碼：", "");
+      if (password != "63501100") { // 👈 這裡改成你想要的密碼
+        alert("密碼錯誤，請重新整理網頁再試一次！");
+        window.location.href = "about:blank"; 
+      }
+    </script>
+  
+<meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+  <title>永續生活小記者行動計畫</title>
+
+  
+
+  <!-- 引入 Google Fonts -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+
+
+
+  <style>
+
+    /* 永續主題配色 */
+
+    :root { --b:#2e7d32; --g:#c8e6c9; --mut:#558b2f; --bg:#f1f8e9; }
+
+    
+
+    body {
+
+      font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", system-ui, sans-serif;
+
+      margin: 0; 
+
+      color: #1b5e20;
+
+      padding-bottom: 120px; 
+
+      background-color: var(--bg);
+
+      background-image: url('https://lh3.googleusercontent.com/d/1PMMbc6X59Ifwywx8fg2beaCXEBB_iBtZ');
+
+      background-size: cover;
+
+      background-position: center;
+
+      background-attachment: fixed;
+
+      background-repeat: no-repeat;
+
+    }
+
+    
+
+    .wrap { 
+
+      max-width: 800px; 
+
+      margin: 20px auto; 
+
+      padding: 24px; 
+
+      background: rgba(255, 255, 255, 0.85); 
+
+      border-radius: 20px;
+
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+
+      backdrop-filter: blur(3px); 
+
+    }
+
+
+
+    /* === 核心：注音排版基礎 === */
+
+    .z-word {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      margin: 0 0.25rem 0 0;
+
+      vertical-align: middle;
+
+      font-family: "Microsoft JhengHei", "KaiTi", sans-serif;
+
+      position: relative;
+
+      white-space: nowrap; 
+
+      height: 2.2rem; 
+
+    }
+
+    .z-char {
+
+      font-size: 1.6rem; 
+
+      line-height: 1.1;
+
+      font-weight: bold;
+
+      color: #1b5e20;
+
+      margin-right: 0px;
+
+    }
+
+    .z-yin {
+
+      display: inline-flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+
+      align-items: center;
+
+      position: relative;
+
+      width: 0.85rem;
+
+      height: 1.6rem; 
+
+      font-size: 0.7rem;
+
+      line-height: 1;
+
+      color: #33691e;
+
+      font-weight: normal;
+
+    }
+
+    .yin-symbol { display: block; height: 0.53rem; line-height: 0.53rem; text-align: center; }
+
+    
+
+    /* 聲調微調：往左移避免與右邊文字重疊 */
+
+    .tone { position: absolute; font-family: system-ui, sans-serif; font-size: 0.55rem; }
+
+    .tone-2, .tone-3, .tone-4 { 
+
+      right: -0.30rem; /* 往左移以緊貼注音 */
+
+      top: 50%; 
+
+      transform: translateY(-30%); 
+
+      width: 0.4rem; 
+
+      text-align: left; 
+
+    }
+
+    .tone-0 { top: -0.5rem; left: 50%; transform: translateX(-50%); }
+
+
+
+    /* 標籤、按鈕、資訊欄字體 */
+
+    label .z-word, .step-text .z-word, .btn .z-word, .news-info .z-word { height: auto; margin-right: 0.1rem; }
+
+    label .z-char, .step-text .z-char, .news-info .z-char { font-size: 18px !important; }
+
+    label .z-yin, .step-text .z-yin, .news-info .z-yin { font-size: 0.42rem; width: 0.48rem; height: auto; }
+
+
+
+/* --- 修正標題：固定大小並鎖定注音位置 --- */
+h1 {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+h1 .z-word {
+  display: inline-flex;
+  flex-direction: row; /* 強制國字與注音水平併排 */
+  align-items: center;
+  height: 4.2rem;      /* 維持垂直空間，避免切到注音 */
+  margin-right: 0.6rem; /* 增加字與字之間的距離 */
+}
+
+h1 .z-char {
+  font-size: 2rem !important; /* 👈 回復原本設定的大小 */
+  line-height: 1.1;
+  color: #1b5e20;
+  font-family: "Noto Serif TC", serif; /* 增加報紙標題的厚實感 */
+}
+
+h1 .z-yin {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 1.1rem;       /* 👈 關鍵：固定寬度 1.1rem，注音才不會亂跑 */
+  font-size: 0.6rem;   /* 標題注音維持適中大小 */
+  margin-left: 4px;    /* 國字與注音的間距 */
+}
+
+/* --- 修正內文行高，確保注音有空間 --- */
+.news-content-block {
+  line-height: 1.8;    /* 👈 從原本的 2.5 縮小到 1.8，行距會明顯變窄 */
+  font-size: 1.2rem;
+  text-align: justify;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+
+
+    .card { 
+
+      background: rgba(255, 255, 255, 0.95);
+
+      border: 1px solid #a5d6a7; 
+
+      border-radius: 16px; 
+
+      padding: 16px; 
+
+      box-shadow: 0 4px 6px rgba(46, 125, 50, 0.05);
+
+      margin-bottom: 16px; 
+
+    }
+
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    .center { justify-content: center; }
+
+    .between { justify-content: space-between; }
+
+    
+
+    .btn {
+
+      border: 1px solid var(--b); background: #388e3c; color: #fff; 
+
+      padding: 10px 14px; border-radius: 12px; cursor: pointer; 
+
+      font-size: 14px; display: inline-flex; align-items: center; gap: 6px;
+
+      font-weight: bold; transition: all 0.2s; box-shadow: 0 2px 0 #1b5e20;
+
+    }
+
+    .btn:active { transform: translateY(2px); box-shadow: none; }
+
+    /* 修改回上一步按鈕的顏色 */
+
+.btn.back {
+
+  background: #558b2f;      /* 👈 改為較深的草綠色 */
+
+  color: #ffffff;           /* 👈 文字改為白色 */
+
+  border: 1px solid #33691e;
+
+  box-shadow: 0 2px 0 #2e7d32;
+
+}
+
+
+
+/* 確保按鈕內的國字與注音都是白色 */
+
+.btn.back .z-char, 
+
+.btn.back .z-yin,
+
+.btn.back span {
+
+  color: #ffffff !important;
+
+}
+
+    /* --- 修改大型按鈕：允許內容自動長高與換行 --- */
+.btn.large { 
+  width: 100%; 
+  justify-content: center; 
+  padding: 12px; 
+  background: #2e7d32; 
+  
+  /* 新增以下設定 */
+  display: inline-flex;
+  flex-wrap: wrap;       /* 👈 允許內部的國字注音自動換行 */
+  height: auto;          /* 👈 取消固定高度，讓按鈕可以往下生長 */
+  white-space: normal;   /* 👈 允許折行 */
+  align-items: center;
+  gap: 4px;              /* 字與字換行時的小間距 */
+}
+
+.btn.edit { 
+  background: #558b2f; 
+  height: auto; 
+  flex-wrap: wrap; 
+  display: inline-flex; 
+  justify-content: center;
+}
+
+.btn.retry { 
+  background: #ef6c00; 
+  height: auto; 
+  flex-wrap: wrap; 
+  display: inline-flex; 
+  justify-content: center;
+}
+
+/* 確保按鈕內部的國字注音容器在換行後不會太擠 */
+.btn .z-word {
+  height: auto !important;
+  margin: 2px 0; 
+}
+
+    
+
+    .btn .z-char { font-size: 1rem !important; color: #fff; }
+
+    .btn .z-yin { font-size: 0.38rem; color: #fff; }
+
+
+
+    .input-group { display: flex; gap: 8px; margin-top: 6px; align-items: center; width: 100%; }
+
+    .input-group input, input[type="text"], select, textarea { 
+
+      flex: 1; padding: 12px; border: 1px solid #a5d6a7; border-radius: 10px; font-size: 16px; 
+
+      box-sizing: border-box; background: #fff; font-family: "Microsoft JhengHei", sans-serif; color: #333;
+
+      width: 100%;
+
+    }
+
+    
+
+/* 麥克風按鈕基礎樣式 */
+.btn.record { 
+  background: #ffffff;      /* 改為乾淨的白底 */
+  border: 2px solid #a5d6a7; /* 淺綠色邊框 */
+  padding: 0; 
+  box-shadow: 0 4px 0 #81c784; 
+  border-radius: 50%;
+  width: 44px; height: 44px; 
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+/* 麥克風內的圖示顏色 */
+.btn.record svg {
+  fill: #2e7d32; /* 預設為深綠色 */
+  transition: fill 0.2s;
+}
+
+/* 錄音中狀態：變紅底、白圖示、跳動動畫 */
+.btn.recording { 
+  animation: pulse 0.8s infinite; /* 錄音中會微微跳動 */
+  background: #ef5350 !important; 
+  border-color: #d32f2f !important;
+  box-shadow: 0 4px 0 #b71c1c !important; 
+}
+
+.btn.recording svg {
+  fill: #ffffff !important; /* 錄音時圖示變白色 */
+}
+
+/* 跳動動畫定義 */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+
+
+    .canvasWrap {
+
+      position: relative; width: 100%; 
+
+      border: 2px dashed #81c784; border-radius: 12px; 
+
+      overflow: hidden; background: #f1f8e9;
+
+      display: flex; justify-content: center; align-items: center;
+
+      min-height: 250px; touch-action: none;
+
+    }
+
+    canvas { display: block; max-width: 100%; height: auto; cursor: crosshair; }
+
+    
+
+    .severity-group { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
+
+.checkbox-label {
+  display: flex; 
+  flex-wrap: wrap;       /* 👈 核心：允許內容換行 */
+  align-items: center; 
+  gap: 6px; 
+  cursor: pointer;
+  background: #e8f5e9; 
+  padding: 10px 10px; 
+  border-radius: 10px; 
+  border: 1px solid #c8e6c9;
+}
+
+/* --- 只新增這兩行，其餘不動 --- */
+  flex-wrap: wrap;       /* 空間不夠時自動換行 */
+  white-space: normal;   /* 允許文字正常折行 */
+  word-break: break-all; /* 👈 這是關鍵：遇到邊界就強制斷行，不再橫向撐開 */
+
+  /* --- 增加以下設定 --- */
+
+  font-weight: normal;   /* 確保外框容器不使用粗體 */
+
+}
+
+
+
+/* 同時也要確保內部的國字不被設為粗體 */
+
+.checkbox-label .z-char {
+
+  font-size: 16px !important;    
+
+  font-weight: normal !important; /* 確保它是細體 */
+
+}
+
+    .checkbox-label input { width: 18px; height: 18px; margin-right: 8px; transform: scale(1.2); }
+
+
+
+    .page-section { display: none; animation: fadeIn 0.3s; }
+
+    .page-section.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
+
+    #report {
+
+      /* --- 關鍵修改：從固定 794px 改為適應螢幕 --- */
+  width: 95%;            /* 在手機上佔螢幕 95% 寬度，留一點邊 */
+  max-width: 794px;      /* 在電腦上最大維持 794px，保持 A4 比例感覺 */
+  min-height: 1123px; 
+  padding: 20px 20px 35px 20px; /* 縮小左右內邊距，把空間留給文字 */
+margin: 0 auto; 
+  box-sizing: border-box;
+  position: relative; 
+  display: flex; 
+  flex-direction: column;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+
+      background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('https://lh3.googleusercontent.com/d/1SOoxXby6ucek-k1CK6IgDVrFxg-98Vdi');
+
+      background-size: cover; background-position: center;
+
+    }
+
+    
+
+    .news-header { 
+
+      border-bottom: 3px double #2e7d32; 
+
+      margin-bottom: 20px; padding-bottom: 15px; 
+
+      display: flex; flex-direction: row; 
+
+      justify-content: center; align-items: center; gap: 15px; 
+
+    }
+
+    
+
+    .news-info { display: flex; justify-content: space-between; align-items: center; color: #333; font-size: 14px; margin-bottom: 10px; width: 100%; font-weight: bold; }
+
+
+
+    #rTitleContainer {
+
+      font-size: 1.8rem;
+
+      text-align: center;
+
+      width: 100%;
+
+      margin: -5px 0 18px 0;
+
+      padding: 10px 0;
+
+      border-top: 1px solid rgba(0,0,0,0.1);
+
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+
+      display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+
+      line-height: 2;
+
+      min-height: 4.5rem;
+
+    }
+
+
+
+    .rImg-wrap {
+
+      width: 100%; height: 280px; 
+
+      display: flex; align-items: center; justify-content: center; 
+
+      margin: 0 auto 20px auto; 
+
+      background: transparent; 
+
+      overflow: hidden;
+
+      border: none;
+
+    }
+
+   #rImg { 
+
+  max-width: 100%; 
+
+  max-height: 100%; 
+
+  width: auto; 
+
+  height: auto; 
+
+  object-fit: contain; 
+
+}
+
+
+
+    .news-content-block { line-height: 2.5; font-size: 12px; text-align: justify; flex-grow: 1; padding: 10px; }
+
+    .news-footer { 
+
+      margin-top: 40px; text-align: center; color: #333; font-size: 14px; 
+
+      border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px; font-weight: bold; 
+
+    }
+
+
+
+    #ai-loading { display: none; text-align: center; padding: 20px; font-size: 1.2rem; color: #2e7d32; }
+
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #2e7d32; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 10px; }
+
+    .hidden { display: none !important; }
+
+  @keyframes sand-timer {
+
+    0% { transform: rotate(0deg); }
+
+    50% { transform: rotate(180deg); }
+
+    100% { transform: rotate(180deg); }
+
+  }
+
+
+
+  .waiting-icon {
+
+    display: inline-block;
+
+    animation: sand-timer 2s infinite;
+
+    font-size: 1.5rem; /* 你可以調整沙漏的大小 */
+
+    margin-right: 8px; /* 讓沙漏跟文字保持距離 */
+
+    vertical-align: middle;
+
+  }
+
+
+
+  </style>
+
+</head>
+
+
+
+<body>
+
+
+
+  <div class="wrap">
+
+    
+
+    <!-- 編輯區 -->
+
+    <div id="page-edit" class="page-section active">
+
+      <div style="text-align:center; margin-bottom:20px;">
+
+        <img src="https://lh3.googleusercontent.com/d/1ybyLQCc_DIAUeS23tz-sORNL43Vv2Kan" style="height: 80px;" alt="Logo">
+
+        <h1>
+
+          <span class="z-word"><span class="z-char">永</span><span class="z-yin"><span class="yin-symbol">ㄩ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">續</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄩ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">生</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">活</span><span class="z-yin"><span class="yin-symbol">ㄏ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄛ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">小</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">記</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">者</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄜ</span><span class="tone tone-3">ˇ</span></span></span>
+
+        </h1>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <div class="row step-text">
+
+<span class="step-badge" style="background:#c8e6c9; display: inline-flex; align-items: center; padding: 4px 10px;">
+
+  <span class="z-word">
+
+    <span class="z-char">步</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄅ</span>
+
+      <span class="yin-symbol">ㄨ</span>
+
+      <span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+  <span class="z-word">
+
+    <span class="z-char">驟</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄓ</span>
+
+      <span class="yin-symbol">ㄡ</span>
+
+      <span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+  <span style="font-weight: bold; margin-left: 2px; font-size: 1.1rem;">1</span>
+
+</span>
+
+          <span class="z-word"><span class="z-char">上</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄤ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">傳</span><span class="z-yin"><span class="yin-symbol">ㄔ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">照</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">片</span><span class="z-yin"><span class="yin-symbol">ㄆ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span>
+
+        </div>
+
+        <div style="margin-top:15px;">
+
+          <input id="photoInput" type="file" accept="image/*" style="display: none;" />
+
+          
+
+          <label for="photoInput" class="btn">
+
+            <span class="z-word">
+
+              <span class="z-char">選</span>
+
+              <span class="z-yin">
+
+                <span class="yin-symbol">ㄒ</span>
+
+                <span class="yin-symbol">ㄩ</span>
+
+                <span class="yin-symbol">ㄢ</span>
+
+                <span class="tone tone-3">ˇ</span>
+
+              </span>
+
+            </span>
+
+            <span class="z-word">
+
+              <span class="z-char">擇</span>
+
+              <span class="z-yin">
+
+                <span class="yin-symbol">ㄗ</span>
+
+                <span class="yin-symbol">ㄜ</span>
+
+                <span class="tone tone-2">ˊ</span>
+
+              </span>
+
+            </span>
+
+            <span class="z-word">
+
+              <span class="z-char">照</span>
+
+              <span class="z-yin">
+
+                <span class="yin-symbol">ㄓ</span>
+
+                <span class="yin-symbol">ㄠ</span>
+
+                <span class="tone tone-4">ˋ</span>
+
+              </span>
+
+            </span>
+
+            <span class="z-word">
+
+              <span class="z-char">片</span>
+
+              <span class="z-yin">
+
+                <span class="yin-symbol">ㄆ</span>
+
+                <span class="yin-symbol">ㄧ</span>
+
+                <span class="yin-symbol">ㄢ</span>
+
+                <span class="tone tone-4">ˋ</span>
+
+              </span>
+
+            </span>
+
+          </label>
+
+          
+
+          <span id="fileNameHint" style="font-size: 12px; color: #666; margin-left: 10px; vertical-align: middle;"></span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <div class="row between step-text">
+
+          <div class="row">
+
+<span class="step-badge" style="background:#c8e6c9; display: inline-flex; align-items: center; padding: 4px 10px;">
+
+  <span class="z-word">
+
+    <span class="z-char">步</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄅ</span>
+
+      <span class="yin-symbol">ㄨ</span>
+
+      <span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+  <span class="z-word">
+
+    <span class="z-char">驟</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄓ</span>
+
+      <span class="yin-symbol">ㄡ</span>
+
+      <span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+  <span style="font-weight: bold; margin-left: 2px; font-size: 1.1rem;">2</span>
+
+</span>
+
+            <span class="z-word"><span class="z-char">圈</span><span class="z-yin"><span class="yin-symbol">ㄑ</span><span class="yin-symbol">ㄩ</span><span class="yin-symbol">ㄢ</span></span></span><span class="z-word"><span class="z-char">選</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄩ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">問</span><span class="z-yin"><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄣ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">題</span><span class="z-yin"><span class="yin-symbol">ㄊ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-2">ˊ</span></span></span>
+
+          </div>
+
+          <div class="row">
+
+            <button class="btn secondary" id="btnUndo" type="button" disabled>↩</button>
+
+            <button class="btn secondary" id="btnClear" type="button" disabled>🗑</button>
+
+          </div>
+
+        </div>
+
+        <div class="canvasWrap" style="margin-top:10px;">
+
+          <div id="placeholderText" style="text-align: center; display: flex; align-items: center; justify-content: center; opacity: 0.7;">
+
+  <span style="font-size: 1rem; vertical-align: middle; margin-right: 4px;">📸</span>
+
+  
+
+  <span class="z-word" style="height: 1.8rem;">
+
+    <span class="z-char" style="font-size: 1.0rem !important;">請</span>
+
+    <span class="z-yin" style="font-size: 0.5rem !important; width: 0.8rem !important;">
+
+      <span class="yin-symbol">ㄑ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3" style="font-size: 0.5rem !important;">ˇ</span>
+
+    </span>
+
+  </span>
+
+
+
+  <span class="z-word" style="height: 1.8rem;">
+
+    <span class="z-char" style="font-size: 1.0rem !important;">先</span>
+
+    <span class="z-yin" style="font-size: 0.5rem !important; width: 0.8rem !important;">
+
+      <span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span>
+
+    </span>
+
+  </span>
+
+
+
+  <span class="z-word" style="height: 1.8rem;">
+
+    <span class="z-char" style="font-size: 1.0rem !important;">選</span>
+
+    <span class="z-yin" style="font-size: 0.5rem !important; width: 0.8rem !important;">
+
+      <span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄩ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-3" style="font-size: 0.5rem !important;">ˇ</span>
+
+    </span>
+
+  </span>
+
+
+
+  <span class="z-word" style="height: 1.8rem;">
+
+    <span class="z-char" style="font-size: 1.0rem !important;">擇</span>
+
+    <span class="z-yin" style="font-size: 0.5rem !important; width: 0.8rem !important;">
+
+      <span class="yin-symbol">ㄗ</span><span class="yin-symbol">ㄜ</span><span class="tone tone-2" style="font-size: 0.5rem !important;">ˊ</span>
+
+    </span>
+
+  </span>
+
+
+
+  <span class="z-word" style="height: 1.8rem;">
+
+    <span class="z-char" style="font-size: 1.0rem !important;">照</span>
+
+    <span class="z-yin" style="font-size: 0.5rem !important; width: 0.8rem !important;">
+
+      <span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-4" style="font-size: 0.5rem !important;">ˋ</span>
+
+    </span>
+
+  </span>
+
+
+
+  <span class="z-word" style="height: 1.8rem;">
+
+    <span class="z-char" style="font-size: 1.0rem !important;">片</span>
+
+    <span class="z-yin" style="font-size: 0.5rem !important; width: 0.8rem !important;">
+
+      <span class="yin-symbol">ㄆ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4" style="font-size: 0.5rem !important;">ˋ</span>
+
+    </span>
+
+  </span>
+
+</div>
+
+          <canvas id="canvas" class="hidden"></canvas>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <div class="row step-text">
+
+<span class="step-badge" style="background:#c8e6c9; display: inline-flex; align-items: center; padding: 4px 10px;">
+
+  <span class="z-word">
+
+    <span class="z-char">步</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄅ</span>
+
+      <span class="yin-symbol">ㄨ</span>
+
+      <span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+  <span class="z-word">
+
+    <span class="z-char">驟</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄓ</span>
+
+      <span class="yin-symbol">ㄡ</span>
+
+      <span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+  <span style="font-weight: bold; margin-left: 2px; font-size: 1.1rem;">3</span>
+
+</span>
+
+          <span class="z-word"><span class="z-char">填</span><span class="z-yin"><span class="yin-symbol">ㄊ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">寫</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄝ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">資</span><span class="z-yin"><span class="yin-symbol">ㄗ</span></span></span><span class="z-word"><span class="z-char">料</span><span class="z-yin"><span class="yin-symbol">ㄌ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-4">ˋ</span></span></span>
+
+        </div>
+
+
+
+        <!-- 姓名與組別修復大小跑掉問題：獨立行顯示並加大 -->
+
+        <div style="margin-top:16px;">
+
+          <label> <span class="z-word"> <span class="z-char">小</span> <span class="z-yin"> <span class="yin-symbol">ㄒ</span> <span class="yin-symbol">ㄧ</span> <span class="yin-symbol">ㄠ</span> <span class="tone tone-3">ˇ</span> </span> </span> <span class="z-word"> <span class="z-char">記</span> <span class="z-yin"> <span class="yin-symbol">ㄐ</span> <span class="yin-symbol">ㄧ</span> <span class="tone tone-4">ˋ</span> </span> </span> <span class="z-word"> <span class="z-char">者</span> <span class="z-yin"> <span class="yin-symbol">ㄓ</span> <span class="yin-symbol">ㄜ</span> <span class="tone tone-3">ˇ</span> </span> </span> <span class="z-word"> <span class="z-char">姓</span> <span class="z-yin"> <span class="yin-symbol">ㄒ</span> <span class="yin-symbol">ㄧ</span> <span class="yin-symbol">ㄥ</span> <span class="tone tone-4">ˋ</span> </span> </span> <span class="z-word"> <span class="z-char">名</span> <span class="z-yin"> <span class="yin-symbol">ㄇ</span> <span class="yin-symbol">ㄧ</span> <span class="yin-symbol">ㄥ</span> <span class="tone tone-2">ˊ</span> </span> </span> </label>
+
+          <input id="reporterName" type="text" placeholder="">
+
+        </div>
+
+
+
+        <div style="margin-top:16px;">
+
+          <label>
+
+            <span class="z-word"><span class="z-char">組</span><span class="z-yin"><span class="yin-symbol">ㄗ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">別</span><span class="z-yin"><span class="yin-symbol">ㄅ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄝ</span><span class="tone tone-2">ˊ</span></span></span>
+
+          </label>
+
+          <select id="team">
+
+            <option value="" disabled selected></option>
+
+            <option value="A組">A組</option><option value="B組">B組</option><option value="C組">C組</option><option value="D組">D組</option><option value="E組">E組</option><option value="F組">F組</option><option value="G組">G組</option>
+
+          </select>
+
+        </div>
+
+
+
+        <div style="margin-top:16px;">
+          <label><span class="z-word"><span class="z-char">發</span><span class="z-yin"><span class="yin-symbol">ㄈ</span><span class="yin-symbol">ㄚ</span></span></span><span class="z-word"><span class="z-char">現</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">地</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">點</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-3">ˇ</span></span></span></label>
+          <div class="input-group">
+            <input id="locationInput" type="text" placeholder="例如：一甲教室旁花圃">
+            <button id="btnMicLocation" type="button" class="btn record">
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <label><span class="z-word"><span class="z-char">現</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">況</span><span class="z-yin"><span class="yin-symbol">ㄎ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄤ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">描</span><span class="z-yin"><span class="yin-symbol">ㄇ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">述</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-4">ˋ</span></span></span></label>
+          <div class="input-group">
+            <input id="problemInput" type="text" placeholder="例如：空花盆積水">
+            <button id="btnMicProblem" type="button" class="btn record">
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <label><span class="z-word"><span class="z-char">潛</span><span class="z-yin"><span class="yin-symbol">ㄑ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">在</span><span class="z-yin"><span class="yin-symbol">ㄗ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">風</span><span class="z-yin"><span class="yin-symbol">ㄈ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">險</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">一</span><span class="yin-symbol">ㄢ</span><span class="tone tone-3">ˇ</span></span></span></label>
+          <div class="input-group">
+            <input id="impactInput" type="text" placeholder="例如：可能滋生蚊蟲">
+            <button id="btnMicImpact" type="button" class="btn record">
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <label><span class="z-word"><span class="z-char">改</span><span class="z-yin"><span class="yin-symbol">ㄍ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">善</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">對</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄟ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">策</span><span class="z-yin"><span class="yin-symbol">ㄘ</span><span class="yin-symbol">ㄜ</span><span class="tone tone-4">ˋ</span></span></span></label>
+          <div class="input-group">
+            <input id="suggestionInput" type="text" placeholder="例如：清除積水，保持乾燥">
+            <button id="btnMicSuggestion" type="button" class="btn record">
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </button>
+          </div>
+        </div>
+
+
+
+        <div style="margin-top:16px;">
+
+          <label>
+
+  <span class="z-word"><span class="z-char">風</span><span class="z-yin"><span class="yin-symbol">ㄈ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">險</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">等</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">級</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-2">ˊ</span></span></span>
+
+</label>
+
+          <div class="severity-group">
+
+            <label class="checkbox-label"><input type="radio" name="severity" value="🟢 輕微" checked><span class="z-word"><span class="z-char">🟢 輕</span><span class="z-yin"><span class="yin-symbol">ㄑ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">微</span><span class="z-yin"><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄟ</span><span class="tone tone-2">ˊ</span></span></span><span style="font-weight:bold; margin-left:5px;">(</span><span class="z-word"><span class="z-char">輕</span><span class="z-yin"><span class="yin-symbol">ㄑ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">度</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">影</span><span class="z-yin"><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">響</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄤ</span><span class="tone tone-3">ˇ</span></span></span><span style="margin:0 2px;">/</span><span class="z-word"><span class="z-char">小</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">範</span><span class="z-yin"><span class="yin-symbol">ㄈ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">圍</span><span class="z-yin"><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄟ</span><span class="tone tone-2">ˊ</span></span></span><span style="font-weight:bold;">)</span></label>
+
+            <label class="checkbox-label"><input type="radio" name="severity" value="🟡 中度"><span class="z-word"><span class="z-char">🟡 中</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">度</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-4">ˋ</span></span></span><span style="font-weight:bold; margin-left:5px;">(</span><span class="z-word"><span class="z-char">中</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">度</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">影</span><span class="z-yin"><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">響</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄤ</span><span class="tone tone-3">ˇ</span></span></span><span style="margin:0 2px;">/</span><span class="z-word"><span class="z-char">需</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄩ</span></span></span><span class="z-word"><span class="z-char">注</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">意</span><span class="z-yin"><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span style="font-weight:bold;">)</span></label>
+
+            <label class="checkbox-label"><input type="radio" name="severity" value="🔴 嚴重"><span class="z-word"><span class="z-char">🔴 嚴</span><span class="z-yin"><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">重</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-4">ˋ</span></span></span><span style="font-weight:bold; margin-left:5px;">(</span><span class="z-word"><span class="z-char">重</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">大</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄚ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">影</span><span class="z-yin"><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">響</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄤ</span><span class="tone tone-3">ˇ</span></span></span><span style="margin:0 2px;">/</span><span class="z-word"><span class="z-char">需</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄩ</span></span></span><span class="z-word"><span class="z-char">立</span><span class="z-yin"><span class="yin-symbol">ㄌ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">即</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-2">ˊ</span></span></span><span style="font-weight:bold;">)</span></label>
+
+          </div>
+
+        </div>
+
+
+
+        <div style="margin-top:16px;">
+
+          <label>
+
+            <span class="z-word"><span class="z-char">影</span><span class="z-yin"><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">響</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄤ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">層</span><span class="z-yin"><span class="yin-symbol">ㄘ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">面</span><span class="z-yin"><span class="yin-symbol">ㄇ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span>
+
+          </label>
+
+          <div class="checkbox-group">
+
+            <label class="checkbox-label"><input type="checkbox" name="scope" value="安全"><span class="z-word"><span class="z-char">安</span><span class="z-yin"><span class="yin-symbol">ㄢ</span></span></span><span class="z-word"><span class="z-char">全</span><span class="z-yin"><span class="yin-symbol">ㄑ</span><span class="yin-symbol">ㄩ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-2">ˊ</span></span></span></label>
+
+            <label class="checkbox-label"><input type="checkbox" name="scope" value="環境"><span class="z-word"><span class="z-char">環</span><span class="z-yin"><span class="yin-symbol">ㄏ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">境</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-4">ˋ</span></span></span></label>
+
+            <label class="checkbox-label"><input type="checkbox" name="scope" value="健康"><span class="z-word"><span class="z-char">健</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">康</span><span class="z-yin"><span class="yin-symbol">ㄎ</span><span class="yin-symbol">ㄤ</span></span></span></label>
+
+            <label class="checkbox-label"><input type="checkbox" name="scope" value="人際"><span class="z-word"><span class="z-char">人</span><span class="z-yin"><span class="yin-symbol">ㄖ</span><span class="yin-symbol">ㄣ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">際</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span></label>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div style="margin-top:30px; text-align:center;">
+
+        <button id="btnGoPreview" type="button" class="btn large" disabled>
+
+          <span class="z-word"><span class="z-char">下</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄚ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">一</span><span class="z-yin"><span class="yin-symbol">ㄧ</span></span></span><span class="z-word"><span class="z-char">步</span><span class="z-yin"><span class="yin-symbol">ㄅ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-4">ˋ</span></span></span>
+
+          <span style="font-weight:bold; margin:0 4px; font-size:1.2rem; vertical-align:middle;">，</span>
+
+          <span class="z-word"><span class="z-char">預</span><span class="z-yin"><span class="yin-symbol">ㄩ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">覽</span><span class="z-yin"><span class="yin-symbol">ㄌ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">小</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">記</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">者</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄜ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">快</span><span class="z-yin"><span class="yin-symbol">ㄎ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">報</span><span class="z-yin"><span class="yin-symbol">ㄅ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-4">ˋ</span></span></span>
+
+          <span style="margin-left:8px;">➡</span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- 頁面 2：預覽區 -->
+
+    <div id="page-preview" class="page-section">
+
+      <div class="row between" style="margin-bottom:15px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 10px;">
+
+       <button id="btnBackEditPreview" type="button" class="btn back">
+
+  <span style="font-size: 1.1rem; vertical-align: middle; margin-right: 4px;">⬅</span>
+
+  <span class="z-word">
+
+    <span class="z-char">回</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄏ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄟ</span><span class="tone tone-2">ˊ</span>
+
+    </span>
+
+  </span>
+
+  <span class="z-word">
+
+    <span class="z-char">上</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄤ</span><span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+  <span class="z-word">
+
+    <span class="z-char">一</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄧ</span>
+
+    </span>
+
+  </span>
+
+  <span class="z-word">
+
+    <span class="z-char">步</span>
+
+    <span class="z-yin">
+
+      <span class="yin-symbol">ㄅ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-4">ˋ</span>
+
+    </span>
+
+  </span>
+
+</button>
+
+        <div style="font-weight: bold; color: #1b5e20;">快報預覽</div>
+
+      </div>
+
+
+
+      <div id="ai-loading"></div>
+
+
+
+      <div id="report-final-container">
+
+        <div id="report">
+
+          <div class="news-header">
+
+            <img src="https://lh3.googleusercontent.com/d/1ybyLQCc_DIAUeS23tz-sORNL43Vv2Kan" style="height: 60px;" alt="Logo" crossorigin="anonymous">
+
+            <h1>
+
+              <span class="z-word"><span class="z-char">永</span><span class="z-yin"><span class="yin-symbol">ㄩ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">續</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄩ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">生</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">活</span><span class="z-yin"><span class="yin-symbol">ㄏ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄛ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">小</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">記</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">者</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄜ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">快</span><span class="z-yin"><span class="yin-symbol">ㄎ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">報</span><span class="z-yin"><span class="yin-symbol">ㄅ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-4">ˋ</span></span></span>
+
+            </h1>
+
+          </div>
+
+          
+
+          <!-- 主題標題：AI 生成，置中 -->
+
+          <div id="rTitleContainer"></div>
+
+
+
+          <div class="news-info">
+
+            <div>
+
+              <span class="z-word"><span class="z-char">記</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">者</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄜ</span><span class="tone tone-3">ˇ</span></span></span>：
+
+              <span id="rReporter"></span>
+
+            </div>
+
+            <div>
+
+              <span class="z-word"><span class="z-char">時</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">間</span><span class="z-yin"><span class="yin-symbol">ㄐ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span></span></span>：
+
+              <span id="rTime"></span>
+
+            </div>
+
+          </div>
+
+          
+
+          <!-- 照片區域調整 -->
+
+          <div class="rImg-wrap">
+
+            <img id="rImg" alt="快報照片">
+
+          </div>
+
+          
+
+          <div id="newsContent" class="news-content-block"></div>
+
+          
+
+          <div id="editArea" class="hidden" style="margin: 15px 0; border-top: 2px dashed #2e7d32; padding-top: 10px;">
+
+             <textarea id="manualEditContent" rows="5" style="background: rgba(255,255,255,0.7);"></textarea>
+
+             <div class="text-center mt-4">
+
+                <button id="btnSaveManual" class="btn">
+
+                   <span class="z-word"><span class="z-char">保</span><span class="z-yin"><span class="yin-symbol">ㄅ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">存</span><span class="z-yin"><span class="yin-symbol">ㄘ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄣ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">修</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄡ</span></span></span><span class="z-word"><span class="z-char">改</span><span class="z-yin"><span class="yin-symbol">ㄍ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-3">ˇ</span></span></span>
+
+                </button>
+
+             </div>
+
+          </div>
+
+
+
+          <div class="news-footer">
+
+            中華電信｜永續生活小記者行動計畫｜2026
+
+          </div>
+
+        </div>
+
+      </div>
+
+      
+
+      <!-- 控制面板整合為一列 -->
+
+      <div id="controlPanel" class="text-center mt-4" style="padding-bottom: 50px;">
+
+        <div class="row center">
+
+          <button id="btnManualEdit" class="btn edit">
+
+             <span class="z-word"><span class="z-char">修</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄡ</span></span></span><span class="z-word"><span class="z-char">改</span><span class="z-yin"><span class="yin-symbol">ㄍ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">報</span><span class="z-yin"><span class="yin-symbol">ㄅ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">導</span><span class="z-yin"><span class="yin-symbol">ㄉ</span><span class="yin-symbol">ㄠ</span><span class="tone tone-3">ˇ</span></span></span>
+
+          </button>
+
+          <button id="btnRetryAI" class="btn retry">
+
+             <span class="z-word"><span class="z-char">A</span></span><span class="z-word"><span class="z-char">I</span></span><span class="z-word"><span class="z-char">重</span><span class="z-yin"><span class="yin-symbol">ㄔ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">新</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄣ</span></span></span><span class="z-word"><span class="z-char">生</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄥ</span></span></span><span class="z-word"><span class="z-char">成</span><span class="z-yin"><span class="yin-symbol">ㄔ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-2">ˊ</span></span></span>
+
+          </button>
+
+          <button id="btnDownload" class="btn large" style="width: auto;">
+
+             <span class="z-word"><span class="z-char">下</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄚ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">載</span><span class="z-yin"><span class="yin-symbol">ㄗ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">圖</span><span class="z-yin"><span class="yin-symbol">ㄊ</span><span class="yin-symbol">ㄨ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">片</span><span class="z-yin"><span class="yin-symbol">ㄆ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    // 1. 請放入你部署 GAS 後得到的 Web App URL
+    const gasUrl = "https://script.google.com/macros/s/AKfycbyI6JOlcS9bDTo1jtUaF8iHVCJ0thD-CtLf6phzslu-57GVYWFHsGestv2O9pMs1-tu/exec"; 
+
+    function switchPage(id) {
+      document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    // --- 畫布功能區 (不變) ---
+    const canvas = document.getElementById("canvas"), ctx = canvas.getContext("2d");
+    const photoInput = document.getElementById("photoInput"), placeholderText = document.getElementById("placeholderText");
+    let baseImage = null, circles = [], isDrawing = false, startX, startY;
+
+    function redraw() {
+      if(!baseImage) return;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+      ctx.lineWidth = 6; ctx.strokeStyle = "red";
+      circles.forEach(c => { ctx.beginPath(); ctx.ellipse(c.cx, c.cy, c.rx, c.ry, 0, 0, Math.PI*2); ctx.stroke(); });
+    }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX, cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: (cx - rect.left) * (canvas.width / rect.width), y: (cy - rect.top) * (canvas.height / rect.height) };
+    }
+
+    canvas.addEventListener('mousedown', s => { if(!baseImage)return; isDrawing=true; let p=getPos(s); startX=p.x; startY=p.y; });
+    canvas.addEventListener('touchstart', s => { if(!baseImage)return; isDrawing=true; let p=getPos(s); startX=p.x; startY=p.y; s.preventDefault(); }, {passive:false});
+    window.addEventListener('mousemove', m => { if(!isDrawing)return; let p=getPos(m); redraw(); let cx=(startX+p.x)/2, cy=(startY+p.y)/2, rx=Math.abs(p.x-startX)/2, ry=Math.abs(p.y-startY)/2; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2); ctx.stroke(); });
+    window.addEventListener('touchmove', m => { if(!isDrawing)return; let p=getPos(m); redraw(); let cx=(startX+p.x)/2, cy=(startY+p.y)/2, rx=Math.abs(p.x-startX)/2, ry=Math.abs(p.y-startY)/2; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2); ctx.stroke(); m.preventDefault(); }, {passive:false});
+    window.addEventListener('mouseup', e => { if(!isDrawing)return; isDrawing=false; let p=getPos(e); let cx=(startX+p.x)/2, cy=(startY+p.y)/2, rx=Math.abs(p.x-startX)/2, ry=Math.abs(p.y-startY)/2; if(rx>5||ry>5)circles.push({cx,cy,rx,ry}); redraw(); updateBtns(); });
+    window.addEventListener('touchend', e => { if(!isDrawing)return; isDrawing=false; let p=getPos(e.changedTouches[0]); let cx=(startX+p.x)/2, cy=(startY+p.y)/2, rx=Math.abs(p.x-startX)/2, ry=Math.abs(p.y-startY)/2; if(rx>5||ry>5)circles.push({cx,cy,rx,ry}); redraw(); updateBtns(); });
+
+    photoInput.addEventListener('change', e => {
+      let f = e.target.files[0]; if(!f) return;
+      let i = new Image(); i.onload = () => {
+        let s = Math.min(1200/i.width, 900/i.height);
+        canvas.width = i.width*s; canvas.height = i.height*s;
+        baseImage = i; circles = []; canvas.classList.remove('hidden'); placeholderText.classList.add('hidden'); redraw();
+        document.getElementById('btnGoPreview').disabled = false;
+      }; i.src = URL.createObjectURL(f);
+    });
+
+    function updateBtns() { document.getElementById('btnUndo').disabled = (circles.length === 0); document.getElementById('btnClear').disabled = (circles.length === 0); }
+    document.getElementById('btnUndo').addEventListener('click', () => { circles.pop(); redraw(); updateBtns(); });
+    document.getElementById('btnClear').addEventListener('click', () => { circles = []; redraw(); updateBtns(); });
+
+   // 優化後的注音生成函數
+function getZWord(char, yin, tone) {
+  // 1. 處理標點符號
+  if (char && char.match(/[，。：；！？（）、]/)) {
+    return `<span class="z-punctuation" style="font-size:1.6rem; margin:0 4px; vertical-align:middle;">${char}</span>`;
+  }
+  
+  // 2. 處理非中文字元
+  if (!char || !char.match(/[\u4e00-\u9fa5]/)) {
+    return `<span style="font-family:sans-serif; margin:0 2px; font-weight:bold;">${char || ""}</span>`;
+  }
+
+  // 3. 聲調判定：對應 GAS 的數字指令
+  let tHtml = "";
+  let t = String(tone);
+  if (t === "2") tHtml = '<span class="tone tone-2">ˊ</span>';
+  else if (t === "3") tHtml = '<span class="tone tone-3">ˇ</span>';
+  else if (t === "4") tHtml = '<span class="tone tone-4">ˋ</span>';
+  else if (t === "0") tHtml = '<span class="tone tone-0">˙</span>';
+  // 一聲 (t === "1") 不顯示符號
+
+  // 4. 注音符號處理
+  let vy = "";
+  if (yin) {
+    let cleanYin = String(yin).replace(/[ˊˇˋ˙]/g, "");
+    for (let s of cleanYin) {
+      vy += `<span class="yin-symbol">${s}</span>`;
+    }
+  }
+
+  return `<span class="z-word"><span class="z-char">${char}</span><span class="z-yin">${vy}${tHtml}</span></span>`;
+}
+
+    function setZLoadingText(text) {
+      const loadingElement = document.getElementById('ai-loading');
+      if (!loadingElement) return;
+      let htmlContent = "";
+      const icon = `<div class="waiting-icon">⏳</div>`;
+      if (text.includes("撰寫中")) {
+        htmlContent = `${icon}<span class="z-word"><span class="z-char">Ａ</span></span><span class="z-word"><span class="z-char">Ｉ</span></span><span class="z-word"><span class="z-char">撰</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">寫</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄝ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">中</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄥ</span></span></span>...`;
+      } else if (text.includes("重新產生")) {
+        htmlContent = `${icon}<span class="z-word"><span class="z-char">正</span><span class="z-yin"><span class="yin-symbol">ㄓ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">在</span><span class="z-yin"><span class="yin-symbol">ㄗ</span><span class="yin-symbol">ㄞ</span><span class="tone tone-4">ˋ</span></span></span><span class="z-word"><span class="z-char">重</span><span class="z-yin"><span class="yin-symbol">ㄔ</span><span class="yin-symbol">ㄨ</span><span class="yin-symbol">ㄥ</span><span class="tone tone-2">ˊ</span></span></span><span class="z-word"><span class="z-char">新</span><span class="z-yin"><span class="yin-symbol">ㄒ</span><span class="yin-symbol">ㄧ</span><span class="yin-symbol">ㄣ</span></span></span><span class="z-word"><span class="z-char">產</span><span class="z-yin"><span class="yin-symbol">ㄔ</span><span class="yin-symbol">ㄢ</span><span class="tone tone-3">ˇ</span></span></span><span class="z-word"><span class="z-char">生</span><span class="z-yin"><span class="yin-symbol">ㄕ</span><span class="yin-symbol">ㄥ</span></span></span>...`;
+      } else {
+        let html = ""; for(let c of text) html += getZWord(c, "", ""); htmlContent = html;
+      }
+      loadingElement.innerHTML = `<div class="loading-container">${htmlContent}</div>`;
+    }
+
+// --- 核心修正：增加自動清理 AI 標籤的邏輯 ---
+ async function callGPTViaGAS(promptText) {
+  try {
+    // 加入時間戳記，防止手機瀏覽器抓舊的「失敗紀錄」快取
+    const finalUrl = gasUrl + (gasUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+
+    const res = await fetch(finalUrl, {
+      method: 'POST',
+      // 強制手機瀏覽器遵循 GAS 的重定向（這是手機版成功的關鍵）
+      redirect: 'follow', 
+      // 改用 plain 文字傳送，繞過手機嚴格的 CORS 預檢
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({ "promptText": promptText })
+    });
+
+    if (!res.ok) throw new Error("網路回應不正常");
+
+    const resultText = await res.text();
+    
+    // 清理可能夾雜的 Markdown 標籤並解析
+    let cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+    let data = JSON.parse(cleanJson);
+    
+    if (data.error) throw new Error(data.error);
+    return data;
+
+  } catch (e) {
+    console.error("手機連線出錯:", e);
+    // 讓手機跳出錯誤視窗，我們才知道是什麼原因
+    alert("手機連線發生錯誤：" + e.message + "\n請確認是否已連上網路，或試試看切換 WiFi/行動網路。");
+    return null;
+  }
+}
+
+    async function generateAIContent(loc, prob, impact, sug, reporter, scope) {
+      const prompt = `您是一位專業的國小記者導師。撰寫一篇具備新聞感的專業快報。要求：
+      1. 生成具備新聞感的聳動標題(title)，最多20字。
+      2. 內文(body)開頭：「本報小記者${reporter}，發現...」。
+      3. 內容包含發現問題、建議校務單位、以及同學預防措施。
+      4. 總字數限制在 120-150 字。
+      回傳 JSON：{"title": [{"c": "字", "y": "注音", "t": "聲調"}...], "body": [{"c": "字", "y": "注音", "t": "聲調"}...]}`;
+      
+      // 改為呼叫 GAS 函數
+      return await callGPTViaGAS(prompt + `\n資訊：地點:${loc}, 問題:${prob}, 風險:${impact}, 建議:${sug}, 層面:${scope}`);
+    }
+
+    async function reZhuyinText(plainText) {
+      const prompt = `將文字轉為台灣注音 JSON 陣列：${plainText}
+      回傳格式：[{"c": "字", "y": "注音", "t": "聲調數字"}...]。禁止羅馬拼音。一聲聲調留空字串。`;
+      
+      // 改為呼叫 GAS 函數
+      return await callGPTViaGAS(prompt);
+    }
+
+    // --- 報告流程 (不變) ---
+    async function startReporting() {
+      const reporter = document.getElementById('reporterName').value || "小記者";
+      const team = document.getElementById('team').value || "未選組";
+      const loc = document.getElementById('locationInput').value || "校園";
+      const scope = Array.from(document.querySelectorAll('input[name="scope"]:checked')).map(cb => cb.value).join("、") || "校園安全";
+
+      document.getElementById('rReporter').textContent = reporter + " (" + team + ")";
+      document.getElementById('rTime').textContent = new Date().toLocaleString('zh-TW');
+      document.getElementById('rImg').src = canvas.toDataURL();
+      
+      switchPage('page-preview');
+      document.getElementById('report-final-container').style.opacity = "0.3";
+      document.getElementById('ai-loading').style.display = 'block';
+      setZLoadingText("ＡＩ撰寫中...");
+      document.getElementById('newsContent').innerHTML = "";
+      document.getElementById('rTitleContainer').innerHTML = "";
+
+      const aiData = await generateAIContent(loc, document.getElementById('problemInput').value, document.getElementById('impactInput').value, document.getElementById('suggestionInput').value, reporter, scope);
+      document.getElementById('ai-loading').style.display = 'none';
+      document.getElementById('report-final-container').style.opacity = "1";
+
+      if(aiData && aiData.title && aiData.body) {
+        let th = ""; aiData.title.forEach(i => { th += getZWord(i.c, i.y, i.t); });
+        document.getElementById('rTitleContainer').innerHTML = th;
+        let bh = ""; aiData.body.forEach(i => { bh += getZWord(i.c, i.y, i.t); });
+        document.getElementById('newsContent').innerHTML = bh;
+        document.getElementById('manualEditContent').value = aiData.body.map(i => i.c).join("");
+      } else {
+        document.getElementById('newsContent').innerHTML = "AI 生成連線逾時，請檢查 GAS 或 OpenAI 額度。";
+      }
+    }
+
+    // --- 事件綁定 (不變) ---
+    document.getElementById('btnGoPreview').onclick = startReporting;
+    document.getElementById('btnRetryAI').onclick = startReporting;
+    document.getElementById('btnBackEditPreview').onclick = () => switchPage('page-edit');
+    document.getElementById('btnManualEdit').onclick = () => document.getElementById('editArea').classList.toggle('hidden');
+
+// --- 修改這一段：保存編輯並重新生成注音 ---
+document.getElementById('btnSaveManual').onclick = async () => {
+      const text = document.getElementById('manualEditContent').value;
+      if (!text) return;
+
+      document.getElementById('ai-loading').style.display = 'block';
+      document.getElementById('report-final-container').style.opacity = "0.3";
+      setZLoadingText("正在重新產生排版...");
+
+      try {
+        let response = await reZhuyinText(text);
+        
+        // 1. 清理字串髒資料 (預防萬一)
+        if (typeof response === 'string') {
+          response = JSON.parse(response.replace(/```json/g, '').replace(/```/g, '').trim());
+        }
+        
+        document.getElementById('ai-loading').style.display = 'none';
+        reportContainer = document.getElementById('report-final-container');
+        reportContainer.style.opacity = "1";
+
+        // 2. 關鍵相容性判斷：
+        // 手動修改時，我們改從 response.body 拿資料
+        let finalData = null;
+        if (Array.isArray(response)) {
+          finalData = response;
+        } else if (response.body && Array.isArray(response.body)) {
+          finalData = response.body;
+        } else if (response.title && Array.isArray(response.title)) {
+          finalData = response.title;
+        }
+
+        if (finalData) {
+          let html = "";
+          finalData.forEach(item => { 
+            html += getZWord(item.c, item.y, item.t); 
+          });
+          document.getElementById('newsContent').innerHTML = html;
+          document.getElementById('editArea').classList.add('hidden');
+        } else {
+          throw new Error("找不到內容陣列");
+        }
+      } catch (error) {
+        console.error("保存失敗:", error);
+        document.getElementById('ai-loading').style.display = 'none';
+        document.getElementById('report-final-container').style.opacity = "1";
+        alert("注音生成格式有誤，請嘗試點擊「AI重新生成」或是減少文字量再試一次。");
+      }
+    };
+
+    document.getElementById('btnDownload').onclick = async () => {
+      const reportDiv = document.getElementById('report');
+      document.getElementById('editArea').classList.add('hidden');
+      document.getElementById('controlPanel').style.display = 'none';
+      document.getElementById('btnBackEditPreview').style.display = 'none';
+      try {
+        const s = await html2canvas(reportDiv, { scale: 3, useCORS: true, backgroundColor: "#ffffff", width: 794, height: 1123 });
+        const a = document.createElement("a");
+        a.href = s.toDataURL("image/png");
+        a.download = `小記者生活快報_${new Date().getTime()}.png`;
+        a.click();
+      } catch (e) { console.error(e); }
+      document.getElementById('controlPanel').style.display = 'block';
+      document.getElementById('btnBackEditPreview').style.display = 'inline-flex';
+    };
+
+    function setupMic(bI, iI) {
+      document.getElementById(bI).onclick = () => {
+        const S = window.webkitSpeechRecognition || window.SpeechRecognition;
+        if(!S) return;
+        const r = new S(); r.lang = 'zh-TW';
+        r.onstart = () => document.getElementById(bI).classList.add('recording');
+        r.onend = () => document.getElementById(bI).classList.remove('recording');
+        r.onresult = (e) => document.getElementById(iI).value = e.results[0][0].transcript;
+        r.start();
+      };
+    }
+    setupMic("btnMicLocation", "locationInput"); setupMic("btnMicProblem", "problemInput"); setupMic("btnMicImpact", "impactInput"); setupMic("btnMicSuggestion", "suggestionInput");
+  </script>
+
+</body>
+
+</html>
