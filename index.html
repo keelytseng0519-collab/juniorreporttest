@@ -1412,37 +1412,37 @@ function getZWord(char, yin, tone) {
     }
 
 async function callGPTViaGAS(promptText) {
-  // 在開始前給一個提示，確認按鈕有被觸發
-  console.log("開始傳送至 AI..."); 
-
   try {
-    // 1. 加入時間戳記避免 Safari 抓舊快取
     const finalUrl = gasUrl + (gasUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
 
-    // 2. 正確的 fetch 寫法
+    // Safari 對 POST 的 JSON 檢查極嚴，我們改用最保險的傳送方式
     const res = await fetch(finalUrl, {
       method: 'POST',
-      // Safari 必須要有這行，強制追蹤 GAS 的重定向
-      redirect: 'follow', 
+      mode: 'cors', // 確保跨域開啟
+      credentials: 'omit', // 告訴 Safari 不要帶 Cookie，增加成功率
       headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
+        // 這是關鍵：有些手機 Safari 不支援在 CORS 下傳送 application/json
+        // 我們改用 text/plain，GAS 那邊一樣收得到
+        'Content-Type': 'text/plain;charset=utf-8' 
       },
       body: JSON.stringify({ "promptText": promptText })
     });
 
-    if (!res.ok) throw new Error("伺服器回應錯誤");
-
+    // 取得 GAS 的回傳文字
     const resultText = await res.text();
     
-    // 3. 清理 AI 可能帶出的 Markdown 標籤並轉為 JSON
+    // 如果 Safari 攔截了重定向，resultText 可能會是空的
+    if (!resultText) {
+      throw new Error("Safari 攔截了回傳內容，請嘗試切換至 Chrome 或關閉「私密瀏覽」。");
+    }
+
     let cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-    let data = JSON.parse(cleanJson);
-    
-    return data;
+    return JSON.parse(cleanJson);
+
   } catch (e) {
-    // 這是給 Safari 抓鬼用的警告
-    console.error("連線出錯:", e);
-    alert("連線失敗！\n1. 如果是 Safari，請檢查是否開啟了『私密瀏覽』\n2. 請確認網路是否通暢\n錯誤訊息：" + e.message);
+    console.error("Safari 錯誤詳情:", e);
+    // 增加一個針對 iPhone 設置的提醒
+    alert("生成失敗！\n如果是 iPhone 請檢查：\n1. 是否開啟「無痕/私密瀏覽」(請關閉)\n2. 設定 > Safari > 隱私權與安全性 > 關閉「阻擋所有 Cookie」");
     return null;
   }
 }
