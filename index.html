@@ -1411,42 +1411,41 @@ function getZWord(char, yin, tone) {
       loadingElement.innerHTML = `<div class="loading-container">${htmlContent}</div>`;
     }
 
-// --- 核心修正：增加自動清理 AI 標籤的邏輯 ---
- async function callGPTViaGAS(promptText) {
+async function callGPTViaGAS(promptText) {
+  // 在開始前給一個提示，確認按鈕有被觸發
+  console.log("開始傳送至 AI..."); 
+
   try {
-    // 加入時間戳記，防止手機瀏覽器抓舊的「失敗紀錄」快取
+    // 1. 加入時間戳記避免 Safari 抓舊快取
     const finalUrl = gasUrl + (gasUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
 
+    // 2. 正確的 fetch 寫法
     const res = await fetch(finalUrl, {
       method: 'POST',
-      // 強制手機瀏覽器遵循 GAS 的重定向（這是手機版成功的關鍵）
+      // Safari 必須要有這行，強制追蹤 GAS 的重定向
       redirect: 'follow', 
-      // 改用 plain 文字傳送，繞過手機嚴格的 CORS 預檢
       headers: {
         'Content-Type': 'text/plain;charset=utf-8'
       },
       body: JSON.stringify({ "promptText": promptText })
     });
 
-    if (!res.ok) throw new Error("網路回應不正常");
+    if (!res.ok) throw new Error("伺服器回應錯誤");
 
     const resultText = await res.text();
     
-    // 清理可能夾雜的 Markdown 標籤並解析
+    // 3. 清理 AI 可能帶出的 Markdown 標籤並轉為 JSON
     let cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
     let data = JSON.parse(cleanJson);
     
-    if (data.error) throw new Error(data.error);
     return data;
-
   } catch (e) {
-    console.error("手機連線出錯:", e);
-    // 讓手機跳出錯誤視窗，我們才知道是什麼原因
-    alert("手機連線發生錯誤：" + e.message + "\n請確認是否已連上網路，或試試看切換 WiFi/行動網路。");
+    // 這是給 Safari 抓鬼用的警告
+    console.error("連線出錯:", e);
+    alert("連線失敗！\n1. 如果是 Safari，請檢查是否開啟了『私密瀏覽』\n2. 請確認網路是否通暢\n錯誤訊息：" + e.message);
     return null;
   }
 }
-
     async function generateAIContent(loc, prob, impact, sug, reporter, scope) {
       const prompt = `您是一位專業的國小記者導師。撰寫一篇具備新聞感的專業快報。要求：
       1. 生成具備新聞感的聳動標題(title)，最多20字。
