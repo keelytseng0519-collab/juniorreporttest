@@ -1556,53 +1556,63 @@ document.getElementById('btnSaveManual').onclick = async () => {
     };
 
 document.getElementById('btnDownload').onclick = async () => {
-      const reportDiv = document.getElementById('report');
-      // 1. 隱藏不必要的按鈕介面
-      document.getElementById('editArea').classList.add('hidden');
-      document.getElementById('controlPanel').style.display = 'none';
-      document.getElementById('btnBackEditPreview').style.display = 'none';
+    const reportDiv = document.getElementById('report');
+    
+    // 1. 備份原本的樣式，並隱藏介面
+    const originalWidth = reportDiv.style.width;
+    const originalTransform = reportDiv.style.transform;
+    document.getElementById('editArea').classList.add('hidden');
+    document.getElementById('controlPanel').style.display = 'none';
+    document.getElementById('btnBackEditPreview').style.display = 'none';
 
-      try {
-        // 2. 轉化為畫布
+    try {
+        // 🚀 關鍵：強制將容器撐開到電腦版的 A4 寬度 (794px)
+        // 這樣 html2canvas 才會抓到正確的排版比例
+        reportDiv.style.width = "794px";
+        reportDiv.style.transform = "none"; 
+
+        // 2. 轉化為畫布 (使用 windowWidth 確保抓取完整寬度)
         const s = await html2canvas(reportDiv, { 
-          scale: 3, 
-          useCORS: true, 
-          backgroundColor: "#ffffff", 
-          width: 794, 
-          height: 1123 
+            scale: 2,               // 2倍解析度已足夠清晰且檔案不會太大
+            useCORS: true, 
+            backgroundColor: "#ffffff", 
+            width: 794, 
+            height: 1123,
+            windowWidth: 1200       // 模擬大視窗環境
         });
         const imgData = s.toDataURL("image/png");
 
-        // 3. 判斷是否為手機 (解決手機下載沒反應的問題)
+        // 3. 還原原本的手機版樣式
+        reportDiv.style.width = originalWidth;
+        reportDiv.style.transform = originalTransform;
+
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
         if (isMobile) {
-          // 手機版：彈出新分頁顯示圖片，引導使用者長按儲存
-          const newWin = window.open();
-          newWin.document.write(`
-            <body style="margin:0; text-align:center; background:#333; color:white; font-family:sans-serif;">
-              <p style="padding:20px;">📷 報導已生成！<br>請【長按圖片】選擇「儲存圖片」</p>
-              <img src="${imgData}" style="max-width:100%; height:auto; box-shadow:0 0 20px rgba(0,0,0,0.5);">
-              <br><br>
-              <button onclick="window.close()" style="padding:10px 20px; border-radius:10px; border:none; background:#555; color:white;">關閉預覽</button>
-            </body>
-          `);
+            // 手機版：彈出新分頁讓使用者長按儲存
+            const newWin = window.open();
+            newWin.document.write(`
+                <body style="margin:0; text-align:center; background:#333; color:white; font-family:sans-serif;">
+                    <p style="padding:20px;">📷 A4 報導已生成！<br>請【長按圖片】儲存到相簿</p>
+                    <img src="${imgData}" style="width:100%; max-width:794px; box-shadow:0 0 20px rgba(0,0,0,0.5);">
+                    <br><br>
+                    <button onclick="window.close()" style="padding:10px 20px; border-radius:10px; border:none; background:#555; color:white;">返回修改</button>
+                </body>
+            `);
         } else {
-          // 電腦版：維持原本的自動下載
-          const a = document.createElement("a");
-          a.href = imgData;
-          a.download = `小記者生活快報_${new Date().getTime()}.png`;
-          a.click();
+            const a = document.createElement("a");
+            a.href = imgData;
+            a.download = `小記者生活快報_${new Date().getTime()}.png`;
+            a.click();
         }
-      } catch (e) { 
+    } catch (e) { 
         console.error(e); 
-        alert("圖片生成失敗，請檢查網路或稍後再試。");
-      }
+        alert("圖片生成失敗。");
+    }
 
-      // 4. 恢復介面顯示
-      document.getElementById('controlPanel').style.display = 'block';
-      document.getElementById('btnBackEditPreview').style.display = 'inline-flex';
-    };
+    // 4. 恢復介面顯示
+    document.getElementById('controlPanel').style.display = 'block';
+    document.getElementById('btnBackEditPreview').style.display = 'inline-flex';
+};
 
 function setupMic(btnId, inputId) {
   const btn = document.getElementById(btnId);
