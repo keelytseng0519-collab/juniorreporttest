@@ -1412,37 +1412,45 @@ function getZWord(char, yin, tone) {
     }
 
 async function callGPTViaGAS(promptText) {
-  try {
-    const finalUrl = gasUrl + (gasUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+  const finalUrl = gasUrl + (gasUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+  
+  // 設定一個 25 秒的超時，避免 Safari 轉圈圈轉太久
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
 
-    // Safari 對 POST 的 JSON 檢查極嚴，我們改用最保險的傳送方式
+  try {
     const res = await fetch(finalUrl, {
       method: 'POST',
-      mode: 'cors', // 確保跨域開啟
-      credentials: 'omit', // 告訴 Safari 不要帶 Cookie，增加成功率
+      // 關鍵 1：不要帶 credentials，避免 Safari 基於隱私保護封鎖
+      credentials: 'omit',
+      // 關鍵 2：改回 text/plain 但加入 charset，這是繞過 Safari Preflight 的最穩方式
       headers: {
-        // 這是關鍵：有些手機 Safari 不支援在 CORS 下傳送 application/json
-        // 我們改用 text/plain，GAS 那邊一樣收得到
-        'Content-Type': 'text/plain;charset=utf-8' 
+        'Content-Type': 'text/plain;charset=utf-8'
       },
-      body: JSON.stringify({ "promptText": promptText })
+      body: JSON.stringify({ "promptText": promptText }),
+      signal: controller.signal
     });
 
-    // 取得 GAS 的回傳文字
+    clearTimeout(timeoutId);
+
     const resultText = await res.text();
     
-    // 如果 Safari 攔截了重定向，resultText 可能會是空的
-    if (!resultText) {
-      throw new Error("Safari 攔截了回傳內容，請嘗試切換至 Chrome 或關閉「私密瀏覽」。");
-    }
+    // 如果 Safari 真的什麼都沒傳回來，給一個明確提示
+    if (!resultText) throw new Error("Safari 攔截了回應內容");
 
     let cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
     return JSON.parse(cleanJson);
 
   } catch (e) {
-    console.error("Safari 錯誤詳情:", e);
-    // 增加一個針對 iPhone 設置的提醒
-    alert("生成失敗！\n如果是 iPhone 請檢查：\n1. 是否開啟「無痕/私密瀏覽」(請關閉)\n2. 設定 > Safari > 隱私權與安全性 > 關閉「阻擋所有 Cookie」");
+    clearTimeout(timeoutId);
+    console.error("Safari 終極失敗:", e);
+
+    // 針對 Safari 的特定環境給出指引
+    if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+      alert("生成失敗！請檢查 iPhone 設定：\n1. 關閉「私密瀏覽模式」\n2. 設定 > Safari > 隱私權 > 關閉「防止跨網站追蹤」\n或是建議改用 Chrome APP 操作。");
+    } else {
+      alert("連線失敗，請檢查網路。錯誤：" + e.message);
+    }
     return null;
   }
 }
