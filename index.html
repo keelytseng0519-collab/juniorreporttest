@@ -1412,45 +1412,37 @@ function getZWord(char, yin, tone) {
     }
 
 async function callGPTViaGAS(promptText) {
-  const finalUrl = gasUrl + (gasUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
-  
-  // 設定一個 25 秒的超時，避免 Safari 轉圈圈轉太久
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 25000);
+  // 在開始前給一個提示，確認按鈕有被觸發
+  console.log("開始傳送至 AI..."); 
 
   try {
+    // 1. 加入時間戳記避免 Safari 抓舊快取
+    const finalUrl = gasUrl + (gasUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+
+    // 2. 正確的 fetch 寫法
     const res = await fetch(finalUrl, {
       method: 'POST',
-      // 關鍵 1：不要帶 credentials，避免 Safari 基於隱私保護封鎖
-      credentials: 'omit',
-      // 關鍵 2：改回 text/plain 但加入 charset，這是繞過 Safari Preflight 的最穩方式
+      // Safari 必須要有這行，強制追蹤 GAS 的重定向
+      redirect: 'follow', 
       headers: {
         'Content-Type': 'text/plain;charset=utf-8'
       },
-      body: JSON.stringify({ "promptText": promptText }),
-      signal: controller.signal
+      body: JSON.stringify({ "promptText": promptText })
     });
 
-    clearTimeout(timeoutId);
+    if (!res.ok) throw new Error("伺服器回應錯誤");
 
     const resultText = await res.text();
     
-    // 如果 Safari 真的什麼都沒傳回來，給一個明確提示
-    if (!resultText) throw new Error("Safari 攔截了回應內容");
-
+    // 3. 清理 AI 可能帶出的 Markdown 標籤並轉為 JSON
     let cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleanJson);
-
+    let data = JSON.parse(cleanJson);
+    
+    return data;
   } catch (e) {
-    clearTimeout(timeoutId);
-    console.error("Safari 終極失敗:", e);
-
-    // 針對 Safari 的特定環境給出指引
-    if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
-      alert("生成失敗！請檢查 iPhone 設定：\n1. 關閉「私密瀏覽模式」\n2. 設定 > Safari > 隱私權 > 關閉「防止跨網站追蹤」\n或是建議改用 Chrome APP 操作。");
-    } else {
-      alert("連線失敗，請檢查網路。錯誤：" + e.message);
-    }
+    // 這是給 Safari 抓鬼用的警告
+    console.error("連線出錯:", e);
+    alert("連線失敗！\n1. 如果是 Safari，請檢查是否開啟了『私密瀏覽』\n2. 請確認網路是否通暢\n錯誤訊息：" + e.message);
     return null;
   }
 }
@@ -1563,64 +1555,21 @@ document.getElementById('btnSaveManual').onclick = async () => {
       }
     };
 
-document.getElementById('btnDownload').onclick = async () => {
-    const reportDiv = document.getElementById('report');
-    
-    // 1. 備份原本的樣式，並隱藏介面
-    const originalWidth = reportDiv.style.width;
-    const originalTransform = reportDiv.style.transform;
-    document.getElementById('editArea').classList.add('hidden');
-    document.getElementById('controlPanel').style.display = 'none';
-    document.getElementById('btnBackEditPreview').style.display = 'none';
-
-    try {
-        // 🚀 關鍵：強制將容器撐開到電腦版的 A4 寬度 (794px)
-        // 這樣 html2canvas 才會抓到正確的排版比例
-        reportDiv.style.width = "794px";
-        reportDiv.style.transform = "none"; 
-
-        // 2. 轉化為畫布 (使用 windowWidth 確保抓取完整寬度)
-        const s = await html2canvas(reportDiv, { 
-            scale: 2,               // 2倍解析度已足夠清晰且檔案不會太大
-            useCORS: true, 
-            backgroundColor: "#ffffff", 
-            width: 794, 
-            height: 1123,
-            windowWidth: 1200       // 模擬大視窗環境
-        });
-        const imgData = s.toDataURL("image/png");
-
-        // 3. 還原原本的手機版樣式
-        reportDiv.style.width = originalWidth;
-        reportDiv.style.transform = originalTransform;
-
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-            // 手機版：彈出新分頁讓使用者長按儲存
-            const newWin = window.open();
-            newWin.document.write(`
-                <body style="margin:0; text-align:center; background:#333; color:white; font-family:sans-serif;">
-                    <p style="padding:20px;">📷 A4 報導已生成！<br>請【長按圖片】儲存到相簿</p>
-                    <img src="${imgData}" style="width:100%; max-width:794px; box-shadow:0 0 20px rgba(0,0,0,0.5);">
-                    <br><br>
-                    <button onclick="window.close()" style="padding:10px 20px; border-radius:10px; border:none; background:#555; color:white;">返回修改</button>
-                </body>
-            `);
-        } else {
-            const a = document.createElement("a");
-            a.href = imgData;
-            a.download = `小記者生活快報_${new Date().getTime()}.png`;
-            a.click();
-        }
-    } catch (e) { 
-        console.error(e); 
-        alert("圖片生成失敗。");
-    }
-
-    // 4. 恢復介面顯示
-    document.getElementById('controlPanel').style.display = 'block';
-    document.getElementById('btnBackEditPreview').style.display = 'inline-flex';
-};
+    document.getElementById('btnDownload').onclick = async () => {
+      const reportDiv = document.getElementById('report');
+      document.getElementById('editArea').classList.add('hidden');
+      document.getElementById('controlPanel').style.display = 'none';
+      document.getElementById('btnBackEditPreview').style.display = 'none';
+      try {
+        const s = await html2canvas(reportDiv, { scale: 3, useCORS: true, backgroundColor: "#ffffff", width: 794, height: 1123 });
+        const a = document.createElement("a");
+        a.href = s.toDataURL("image/png");
+        a.download = `小記者生活快報_${new Date().getTime()}.png`;
+        a.click();
+      } catch (e) { console.error(e); }
+      document.getElementById('controlPanel').style.display = 'block';
+      document.getElementById('btnBackEditPreview').style.display = 'inline-flex';
+    };
 
 function setupMic(btnId, inputId) {
   const btn = document.getElementById(btnId);
@@ -1640,12 +1589,6 @@ function setupMic(btnId, inputId) {
     r.start();
   };
 }
-
-// 重新綁定四個按鈕
-setupMic("btnMicLocation", "locationInput");
-setupMic("btnMicProblem", "problemInput");
-setupMic("btnMicImpact", "impactInput");
-setupMic("btnMicSuggestion", "suggestionInput");
     setupMic("btnMicLocation", "locationInput"); setupMic("btnMicProblem", "problemInput"); setupMic("btnMicImpact", "impactInput"); setupMic("btnMicSuggestion", "suggestionInput");
   </script>
 
