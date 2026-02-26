@@ -1571,44 +1571,21 @@ document.getElementById('btnSaveManual').onclick = async () => {
       document.getElementById('btnBackEditPreview').style.display = 'inline-flex';
     };
 
-    function setupMic(btnId, inputId) {
+function setupMic(btnId, inputId) {
   const btn = document.getElementById(btnId);
   const input = document.getElementById(inputId);
-  
   btn.onclick = () => {
     const Speech = window.webkitSpeechRecognition || window.SpeechRecognition;
-    if (!Speech) {
-      alert("您的瀏覽器不支援語音辨識，請使用 Chrome 瀏覽器。");
-      return;
-    }
-
+    if (!Speech) return;
     const r = new Speech();
     r.lang = 'zh-TW';
-    r.continuous = false; // 關鍵：辨識到一段落就自動結束，不持續監聽
-    r.interimResults = false;
-
-    r.onstart = () => {
-      btn.classList.add('recording');
-    };
-
-    r.onend = () => {
-      btn.classList.remove('recording');
-    };
-
+    r.continuous = false; // 確保辨識一段後自動停止
+    r.onstart = () => btn.classList.add('recording');
+    r.onend = () => btn.classList.remove('recording');
     r.onresult = (e) => {
-      const result = e.results[0][0].transcript;
-      input.value = result;
-      // 關鍵：填入文字後明確停止麥克風，釋放硬體資源
-      r.stop(); 
-      btn.classList.remove('recording');
+      input.value = e.results[0][0].transcript;
+      r.stop(); // 👈 填入文字後立刻強制關閉麥克風
     };
-
-    r.onerror = (e) => {
-      console.error("語音辨識錯誤:", e.error);
-      btn.classList.remove('recording');
-      r.stop();
-    };
-
     r.start();
   };
 }
